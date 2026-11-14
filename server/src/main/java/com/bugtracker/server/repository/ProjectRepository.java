@@ -1,4 +1,4 @@
-package repository;
+package com.bugtracker.server.repository;
 
 import com.bugtracker.server.entity.Project;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,6 +9,6 @@ import java.util.List;
 
 public interface ProjectRepository extends JpaRepository<Project, Long> {
 
-    @Query("select distinct p from Project p join p.membership m where m.user.id = :userId order by p.id")
+    @Query("select distinct p from Project p join p.memberships m where m.user.id = :userId order by p.id")
     List<Project> findByMember(@Param("userId") Long userId);
 }

@@ -1,4 +1,4 @@
-package repository;
+package com.bugtracker.server.repository;
 
 import com.bugtracker.server.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +11,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsernameIgnoreCase(String username);
     Optional<User> findByEmailIgnoreCase(String email);
 
-    @Query("select u from User where lower(u.username)= lower(:login) or lower(u.email)= lower(:login)")
+    @Query("select u from User u where lower(u.username)= lower(:login) or lower(u.email)= lower(:login)")
     Optional<User> findByLogin(@Param("login") String login);
 }
