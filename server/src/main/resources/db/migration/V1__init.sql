@@ -1,98 +1,98 @@
 CREATE TABLE app_user (
     id            BIGSERIAL PRIMARY KEY,
-    imya_polzovatelya      VARCHAR(255) NOT NULL,
-    pochta         VARCHAR(255) NOT NULL,
-    parol_hesh VARCHAR(255) NOT NULL,
-    udalen    BOOLEAN      NOT NULL DEFAULT FALSE
+    username      VARCHAR(255) NOT NULL,
+    email         VARCHAR(255) NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    is_deleted    BOOLEAN      NOT NULL DEFAULT FALSE
 );
 
-CREATE UNIQUE INDEX ux_app_user_username ON app_user (lower(imya_polzovatelya));
-CREATE UNIQUE INDEX ux_app_user_email    ON app_user (lower(pochta));
+CREATE UNIQUE INDEX ux_app_user_username ON app_user (lower(username));
+CREATE UNIQUE INDEX ux_app_user_email    ON app_user (lower(email));
 
 CREATE TABLE project (
     id          BIGSERIAL PRIMARY KEY,
-    nazvanie        VARCHAR(255) NOT NULL,
-    opisanie TEXT
+    name        VARCHAR(255) NOT NULL,
+    description TEXT
 );
 
 CREATE TABLE project_member (
     id         BIGSERIAL PRIMARY KEY,
-    proekt_id BIGINT      NOT NULL REFERENCES project (id) ON DELETE CASCADE,
-    polzovatel_id    BIGINT      NOT NULL REFERENCES app_user (id),
-    rol       VARCHAR(20) NOT NULL CHECK (rol IN ('TESTER', 'DEVELOPER', 'TEAM_LEAD')),
-    UNIQUE (proekt_id, polzovatel_id)
+    project_id BIGINT      NOT NULL REFERENCES project (id) ON DELETE CASCADE,
+    user_id    BIGINT      NOT NULL REFERENCES app_user (id),
+    role       VARCHAR(20) NOT NULL CHECK (role IN ('TESTER', 'DEVELOPER', 'TEAM_LEAD')),
+    UNIQUE (project_id, user_id)
 );
 
 CREATE TABLE release (
     id           BIGSERIAL PRIMARY KEY,
-    proekt_id   BIGINT       NOT NULL REFERENCES project (id) ON DELETE CASCADE,
-    nazvanie         VARCHAR(255) NOT NULL,
-    planovaya_data TIMESTAMPTZ  NOT NULL,
+    project_id   BIGINT       NOT NULL REFERENCES project (id) ON DELETE CASCADE,
+    name         VARCHAR(255) NOT NULL,
+    planned_date TIMESTAMPTZ  NOT NULL,
     status       VARCHAR(20)  NOT NULL DEFAULT 'PLANNED' CHECK (status IN ('PLANNED', 'RELEASED'))
 );
-CREATE INDEX ix_release_project ON release (proekt_id);
+CREATE INDEX ix_release_project ON release (project_id);
 
 CREATE TABLE bug (
     id                 BIGSERIAL PRIMARY KEY,
-    proekt_id         BIGINT       NOT NULL REFERENCES project (id) ON DELETE CASCADE,
-    avtor_id          BIGINT       NOT NULL REFERENCES app_user (id),
-    otvetstvennyi_id        BIGINT       REFERENCES app_user (id),
-    reliz_id         BIGINT       REFERENCES release (id) ON DELETE SET NULL,
-    nazvanie              VARCHAR(255) NOT NULL,
-    prioritet           VARCHAR(20)  NOT NULL CHECK (prioritet IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')),
-    opisanie        TEXT         NOT NULL,
-    shagi_vosproizvedeniya TEXT         NOT NULL,
-    ozhidaemyi_rezultat    TEXT,
-    fakticheskii_rezultat      TEXT,
+    project_id         BIGINT       NOT NULL REFERENCES project (id) ON DELETE CASCADE,
+    author_id          BIGINT       NOT NULL REFERENCES app_user (id),
+    assignee_id        BIGINT       REFERENCES app_user (id),
+    release_id         BIGINT       REFERENCES release (id) ON DELETE SET NULL,
+    title              VARCHAR(255) NOT NULL,
+    priority           VARCHAR(20)  NOT NULL CHECK (priority IN ('LOW', 'MEDIUM', 'HIGH', 'CRITICAL')),
+    description        TEXT         NOT NULL,
+    steps_to_reproduce TEXT         NOT NULL,
+    expected_result    TEXT,
+    actual_result      TEXT,
     status             VARCHAR(20)  NOT NULL DEFAULT 'NEW'
                        CHECK (status IN ('NEW', 'IN_PROGRESS', 'IN_REVIEW', 'CLOSED')),
-    data_sozdaniya         TIMESTAMPTZ  NOT NULL DEFAULT now()
+    created_at         TIMESTAMPTZ  NOT NULL DEFAULT now()
 );
-CREATE INDEX ix_bug_project_status ON bug (proekt_id, status, data_sozdaniya DESC);
-CREATE INDEX ix_bug_assignee       ON bug (otvetstvennyi_id);
-CREATE INDEX ix_bug_author         ON bug (avtor_id);
-CREATE INDEX ix_bug_release        ON bug (reliz_id);
+CREATE INDEX ix_bug_project_status ON bug (project_id, status, created_at DESC);
+CREATE INDEX ix_bug_assignee       ON bug (assignee_id);
+CREATE INDEX ix_bug_author         ON bug (author_id);
+CREATE INDEX ix_bug_release        ON bug (release_id);
 
 CREATE TABLE comment (
     id         BIGSERIAL PRIMARY KEY,
-    bag_id     BIGINT      NOT NULL REFERENCES bug (id) ON DELETE CASCADE,
-    avtor_id  BIGINT      NOT NULL REFERENCES app_user (id),
-    tekst       TEXT        NOT NULL,
-    data_sozdaniya TIMESTAMPTZ NOT NULL DEFAULT now()
+    bug_id     BIGINT      NOT NULL REFERENCES bug (id) ON DELETE CASCADE,
+    author_id  BIGINT      NOT NULL REFERENCES app_user (id),
+    text       TEXT        NOT NULL,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
-CREATE INDEX ix_comment_bug ON comment (bag_id);
+CREATE INDEX ix_comment_bug ON comment (bug_id);
 
 CREATE TABLE attachment (
     id           BIGSERIAL PRIMARY KEY,
-    bag_id       BIGINT       REFERENCES bug (id) ON DELETE CASCADE,
-    kommentarii_id   BIGINT       REFERENCES comment (id) ON DELETE CASCADE,
-    imya_faila    VARCHAR(255) NOT NULL,
-    tip_soderzhimogo VARCHAR(255) NOT NULL,
-    razmer_bait   BIGINT       NOT NULL,
-    kluch_hranilishcha  VARCHAR(255) NOT NULL UNIQUE,
-    CONSTRAINT ck_attachment_owner CHECK ((bag_id IS NULL) <> (kommentarii_id IS NULL))
+    bug_id       BIGINT       REFERENCES bug (id) ON DELETE CASCADE,
+    comment_id   BIGINT       REFERENCES comment (id) ON DELETE CASCADE,
+    file_name    VARCHAR(255) NOT NULL,
+    content_type VARCHAR(255) NOT NULL,
+    size_bytes   BIGINT       NOT NULL,
+    storage_key  VARCHAR(255) NOT NULL UNIQUE,
+    CONSTRAINT ck_attachment_owner CHECK ((bug_id IS NULL) <> (comment_id IS NULL))
 );
-CREATE INDEX ix_attachment_bug     ON attachment (bag_id);
-CREATE INDEX ix_attachment_comment ON attachment (kommentarii_id);
+CREATE INDEX ix_attachment_bug     ON attachment (bug_id);
+CREATE INDEX ix_attachment_comment ON attachment (comment_id);
 
 CREATE TABLE commit_link (
     id     BIGSERIAL PRIMARY KEY,
-    bag_id BIGINT      NOT NULL REFERENCES bug (id) ON DELETE CASCADE,
-    tip   VARCHAR(20) NOT NULL CHECK (tip IN ('COMMIT', 'MERGE_REQUEST')),
+    bug_id BIGINT      NOT NULL REFERENCES bug (id) ON DELETE CASCADE,
+    type   VARCHAR(20) NOT NULL CHECK (type IN ('COMMIT', 'MERGE_REQUEST')),
     url    TEXT        NOT NULL
 );
-CREATE INDEX ix_commit_link_bug ON commit_link (bag_id);
+CREATE INDEX ix_commit_link_bug ON commit_link (bug_id);
 
 CREATE TABLE history_entry (
     id         BIGSERIAL PRIMARY KEY,
-    bag_id     BIGINT      NOT NULL REFERENCES bug (id) ON DELETE CASCADE,
-    avtor_izmeneniya_id   BIGINT      NOT NULL REFERENCES app_user (id),
-    data_izmeneniya TIMESTAMPTZ NOT NULL DEFAULT now(),
-    sobytie      VARCHAR(30) NOT NULL CHECK (sobytie IN (
+    bug_id     BIGINT      NOT NULL REFERENCES bug (id) ON DELETE CASCADE,
+    actor_id   BIGINT      NOT NULL REFERENCES app_user (id),
+    changed_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    event      VARCHAR(30) NOT NULL CHECK (event IN (
                    'CREATED', 'TAKEN_IN_WORK', 'ABANDONED', 'ASSIGNEE_RELEASED',
                    'SUBMITTED_FOR_REVIEW', 'RETURNED_TO_WORK', 'CLOSED', 'RELEASE_CHANGED')),
-    pole      VARCHAR(100),
-    staroe_znachenie  TEXT,
-    novoe_znachenie  TEXT
+    field      VARCHAR(100),
+    old_value  TEXT,
+    new_value  TEXT
 );
-CREATE INDEX ix_history_bug ON history_entry (bag_id, data_izmeneniya);
+CREATE INDEX ix_history_bug ON history_entry (bug_id, changed_at);
