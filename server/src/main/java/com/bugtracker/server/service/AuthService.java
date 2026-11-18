@@ -56,4 +56,15 @@ public class AuthService {
     private String trim(String value) {
         return value == null ? "" : value.trim();
     }
+
+    public User authenticate(String token) {
+        Long userId = tokenProvider.validate(token)
+                .orElseThrow(() -> new UnauthorizedException("Токен неверный или просрочен"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UnauthorizedException("Пользователь не найден"));
+        if (user.isDeleted()) {
+            throw new UnauthorizedException("Профиль удалён");
+        }
+        return user;
+    }
 }
