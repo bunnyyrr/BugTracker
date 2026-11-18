@@ -1,7 +1,7 @@
 package com.bugtracker.server.controllers;
 
 import com.bugtracker.server.dto.UserResponse;
-import com.bugtracker.server.service.UserService;
+import com.bugtracker.server.service.i.IUserService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class UserController {
 
-    private final UserService userService;
+    private final IUserService userService;
 
-    public UserController(UserService userService) {
+    public UserController(IUserService userService) {
         this.userService = userService;
     }
 
