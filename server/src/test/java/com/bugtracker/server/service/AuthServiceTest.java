@@ -11,6 +11,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Optional;
 
@@ -111,5 +112,42 @@ class AuthServiceTest {
         assertThatThrownBy(() -> authService.login("nobody", "secret"))
                 .isInstanceOf(UnauthorizedException.class)
                 .hasMessage("Неверный логин или пароль");
+    }
+
+    @Test
+    void authenticateReturnsUserForValidToken() {
+        User user = new User("kate", "kate@example.com", "h");
+        when(tokenProvider.validate("token")).thenReturn(Optional.of(5L));
+        when(userRepository.findById(5L)).thenReturn(Optional.of(user));
+
+        assertThat(authService.authenticate("token")).isSameAs(user);
+    }
+
+    @Test
+    void authenticateRejectsInvalidToken() {
+        when(tokenProvider.validate("bad")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> authService.authenticate("bad"))
+                .isInstanceOf(UnauthorizedException.class);
+    }
+
+    @Test
+    void authenticateRejectsUnknownUser() {
+        when(tokenProvider.validate("token")).thenReturn(Optional.of(9L));
+        when(userRepository.findById(9L)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> authService.authenticate("token"))
+                .isInstanceOf(UnauthorizedException.class);
+    }
+
+    @Test
+    void authenticateRejectsDeletedUser() {
+        User user = new User("kate", "kate@example.com", "h");
+        ReflectionTestUtils.setField(user, "isDeleted", true);
+        when(tokenProvider.validate("token")).thenReturn(Optional.of(5L));
+        when(userRepository.findById(5L)).thenReturn(Optional.of(user));
+
+        assertThatThrownBy(() -> authService.authenticate("token"))
+                .isInstanceOf(UnauthorizedException.class);
     }
 }
