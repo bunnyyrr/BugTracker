@@ -28,3 +28,6 @@ management:
 
 app:
   upload-dir: ${APP_UPLOAD_DIR:./uploads}
+  jwt:
+    secret: ${JWT_SECRET:dev-only-secret-change-me-in-production-32b}
+    expiration-hours: 24
