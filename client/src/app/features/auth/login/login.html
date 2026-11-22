@@ -1,1 +1,53 @@
-<p>login works!</p>
+<main class="card">
+  <header class="header">
+    <h1 class="title">Вход в систему</h1>
+    <p class="subtitle">С возвращением! Войдите, чтобы продолжить работу</p>
+  </header>
+
+  <div class="content">
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="field">
+        <label for="login">Имя пользователя или email <span class="star" aria-hidden="true">*</span></label>
+        <input
+          id="login"
+          type="text"
+          formControlName="login"
+          placeholder="Введите имя пользователя или email..."
+          autocomplete="username"
+          required
+          [class.invalid]="isInvalid('login')"
+          [attr.aria-invalid]="isInvalid('login')"
+        />
+      </div>
+
+      <div class="field">
+        <label for="password">Пароль <span class="star" aria-hidden="true">*</span></label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Введите пароль..."
+          autocomplete="current-password"
+          required
+          [class.invalid]="isInvalid('password')"
+          [attr.aria-invalid]="isInvalid('password')"
+        />
+      </div>
+
+      @if (error()) {
+        <div class="alert" role="alert">
+          <svg class="alert-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <circle cx="9" cy="9" r="7.5" />
+            <path d="M9 5v5" stroke-linecap="round" />
+            <circle cx="9" cy="12.5" r="0.6" fill="currentColor" />
+          </svg>
+          <span>{{ error() }}</span>
+        </div>
+      }
+
+      <button class="submit" type="submit" [disabled]="loading()">Войти</button>
+    </form>
+
+    <p class="register">Нет аккаунта? <a class="link" routerLink="/register">Зарегистрироваться</a></p>
+  </div>
+</main>
