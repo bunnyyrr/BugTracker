@@ -1,9 +1,15 @@
 package com.bugtracker.server.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name= "app_user")
+@Getter
+@Table(name = "app_user")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
     @Id
@@ -14,35 +20,37 @@ public class User {
     private String username;
 
     @Column(nullable = false)
+    @Email
     private String email;
 
-    @Column(name= "password_hash", nullable = false)
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @Column(name= "is_deleted", nullable = false)
+    @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted;
-
-    protected User(){
-    }
 
     public User(String username, String email, String passwordHash) {
         this.username = username;
         this.email = email;
         this.passwordHash = passwordHash;
     }
-    public Long getId() {
-        return id;
+
+    public void changeUsername(String newUsername) {
+        this.username = newUsername;
     }
-    public String getUsername() {
-        return username;
+
+    public void changeEmail(String newEmail) {
+        this.email = newEmail;
     }
-    public String getEmail(){
-        return email;
+
+    public void changePassword(String newPasswordHash) {
+        this.passwordHash = newPasswordHash;
     }
-    public String getPasswordHash() {
-        return passwordHash;
-    }
-    public boolean isDeleted() {
-        return isDeleted;
+
+    public void anonymize() {
+        this.isDeleted = true;
+        this.username = "deleted_" + id;
+        this.email = "deleted_" + id + "@deleted.invalid";
+        this.passwordHash = "";
     }
 }
