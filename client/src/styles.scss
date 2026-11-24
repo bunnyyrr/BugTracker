@@ -1,39 +1,47 @@
-// Include theming for Angular Material with `mat.theme()`.
-// This Sass mixin will define CSS variables that are used for styling Angular Material
-// components according to the Material 3 design spec.
-// Learn more about theming and how to use it for your application's
-// custom components at https://material.angular.dev/guide/theming
-@use '@angular/material' as mat;
+:root {
+  color-scheme: dark;
 
-html {
-  height: 100%;
-  @include mat.theme(
-    (
-      color: (
-        primary: mat.$azure-palette,
-        tertiary: mat.$blue-palette,
-      ),
-      typography: Roboto,
-      density: 0,
-    )
-  );
+  --bg-dark: #0A0914;
+  --bg-accent: #3D377A;
+
+  --card-bg-white-top: #FFFFFF12;
+  --card-bg-white-bottom: #FFFFFF08;
+  --card-border: #FFFFFF17;
+  --shadow: #000000B3;
+  --shadow-inset: #0000000D;
+
+  --white: #FFFFFF;
+  --text-muted: #A6A3C0;
+  --placeholder: #A6A3C080;
+
+  --button-from: #8F70FF;
+  --button-to: #6A46FF;
+  --button-shadow: #7C5CFFCC;
+  --button-shadow-inset: #FFFFFF4D;
+
+  --accent: #A78BFA;
+  --danger: #FF5D7A;
+  --danger-text: #FF8FA5;
+
+  --field-border: #A6A3C080;
+  --field-bg-from: #FFFFFF09;
+  --field-bg-to: #FFFFFF04;
+  --field-bg-focus: #7C5CFF12;
+  --field-border-error: #FF5D7AB3;
+  --field-bg-error: #FF5D7A1A;
+
+  --alert-bg: #FF5D7A26;
+  --alert-border: #FF5D7A99;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
 }
 
 body {
-  // Default the application to a light color theme. This can be changed to
-  // `dark` to enable the dark color theme, or to `light dark` to defer to the
-  // user's system settings.
-  color-scheme: light;
-
-  // Set a default background, font and text colors for the application using
-  // Angular Material's system-level CSS variables. Learn more about these
-  // variables at https://material.angular.dev/guide/system-variables
-  background-color: var(--mat-sys-surface);
-  color: var(--mat-sys-on-surface);
-  font: var(--mat-sys-body-medium);
-
-  // Reset the user agent margin.
-  margin: 0;
-  height: 100%;
+  background: linear-gradient(47deg, var(--bg-accent) -179%, var(--bg-dark) 52%, var(--bg-accent) 285%);
+  font-family: 'Arimo', Arial, sans-serif;
+  color: var(--white);
 }
-/* You can add global styles to this file, and also import other style files */
