@@ -8,7 +8,7 @@ import { ApiError } from '../../../core/models/auth';
 @Component({
   imports: [ReactiveFormsModule, RouterLink],
   selector: 'app-login',
-  styleUrl: './login.scss',
+  styleUrl: '../auth.scss',
   templateUrl: './login.html',
 })
 export class Login {
@@ -17,7 +17,7 @@ export class Login {
   private router = inject(Router);
 
   form = this.fb.nonNullable.group({
-    login: ['', Validators.required],
+    login: ['', [Validators.required, Validators.pattern(/\S/)]],
     password: ['', Validators.required],
   });
 
@@ -27,6 +27,11 @@ export class Login {
 
   isInvalid(name: 'login' | 'password'): boolean {
     return this.submitted() && this.form.controls[name].invalid;
+  }
+
+  clearErrors(): void {
+    this.error.set(null);
+    this.submitted.set(false);
   }
 
   submit(): void {
@@ -39,7 +44,8 @@ export class Login {
     this.loading.set(true);
     this.error.set(null);
 
-    this.auth.login(this.form.getRawValue()).subscribe({
+    const raw = this.form.getRawValue();
+    this.auth.login({ login: raw.login.trim(), password: raw.password }).subscribe({
       next: () => this.router.navigateByUrl('/projects'),
       error: (e: HttpErrorResponse) => {
         this.loading.set(false);
