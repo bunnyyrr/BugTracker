@@ -1,1 +1,70 @@
-<p>register works!</p>
+<main class="card">
+  <header class="header">
+    <h1 class="title">Регистрация</h1>
+    <p class="subtitle">Создайте аккаунт, чтобы вести баги вместе с командой</p>
+  </header>
+
+  <div class="content">
+    <form class="form" [formGroup]="form" (ngSubmit)="submit()" novalidate>
+      <div class="field">
+        <label for="username">Имя пользователя <span class="star" aria-hidden="true">*</span></label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          placeholder="Введите имя пользователя..."
+          autocomplete="nickname"
+          required
+          [class.invalid]="isInvalid('username')"
+          [attr.aria-invalid]="isInvalid('username')"
+          (input)="clearErrors()"
+        />
+      </div>
+
+      <div class="field">
+        <label for="email">Email <span class="star" aria-hidden="true">*</span></label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="Введите email..."
+          autocomplete="email"
+          required
+          [class.invalid]="isInvalid('email')"
+          [attr.aria-invalid]="isInvalid('email')"
+          (input)="clearErrors()"
+        />
+      </div>
+
+      <div class="field">
+        <label for="password">Пароль <span class="star" aria-hidden="true">*</span></label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Введите пароль..."
+          autocomplete="new-password"
+          required
+          [class.invalid]="isInvalid('password')"
+          [attr.aria-invalid]="isInvalid('password')"
+          (input)="clearErrors()"
+        />
+      </div>
+
+      @if (error()) {
+        <div class="alert" role="alert">
+          <svg class="alert-icon" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true">
+            <circle cx="9" cy="9" r="7.5" />
+            <path d="M9 5v5" stroke-linecap="round" />
+            <circle cx="9" cy="12.5" r="0.6" fill="currentColor" />
+          </svg>
+          <span>{{ error() }}</span>
+        </div>
+      }
+
+      <button class="submit" type="submit" [disabled]="loading()">Зарегистрироваться</button>
+    </form>
+
+    <p class="switch">Уже есть аккаунт? <a class="link" routerLink="/login">Войти</a></p>
+  </div>
+</main>
