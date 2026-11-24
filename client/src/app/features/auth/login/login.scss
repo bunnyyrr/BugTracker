@@ -1,8 +1,8 @@
 :host {
   display: grid;
-  place-items: center;
+  place-items: start center;
   min-height: 100vh;
-  padding: 1rem;
+  padding: 10vh 1rem 1rem 1rem;
 }
 
 .card {
@@ -79,7 +79,7 @@ label {
 input {
   padding: 1.125rem;
   border-radius: 0.625rem;
-  background: linear-gradient(180deg, var(--field-bg-from), var(--field-bg-to));
+  background: transparent;
   border: 2px solid var(--field-border);
   font-family: inherit;
   font-size: 1.0625rem;
@@ -124,10 +124,8 @@ input.invalid {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.625rem;
-  background-color: var(--alert-bg);
-  border: 2px solid var(--alert-border);
-  color: var(--danger-text);
+  padding-left: 0.5rem;
+  color: var(--danger);
   font-size: 1.0625rem;
   line-height: 1.25rem;
   border-radius: 0.625rem;
@@ -135,4 +133,11 @@ input.invalid {
 
 .alert-icon {
   width: 1.25rem;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus, {
+  -webkit-box-shadow: 0 0 0 1000px var(--autofill) inset !important;
+  -webkit-text-fill-color: var(--white) !important;
 }
