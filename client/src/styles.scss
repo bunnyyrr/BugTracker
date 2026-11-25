@@ -3,6 +3,10 @@
 
   --bg-dark: #0A0914;
   --bg-accent: #3D377A;
+  --rad-grad-from: #7C5CFF10;
+  --rad-grad-to: #7C5CFF00;
+
+  --header-bg: #0E0B1C99;
 
   --card-bg-white-top: #FFFFFF12;
   --card-bg-white-bottom: #FFFFFF08;
@@ -41,7 +45,9 @@
 }
 
 body {
-  background: linear-gradient(47deg, var(--bg-accent) -179%, var(--bg-dark) 52%, var(--bg-accent) 285%);
+  background: linear-gradient(47deg, var(--bg-accent) -179%, var(--bg-dark) 52%, var(--bg-accent) 285%),
+    radial-gradient(59.48% 117.62% at 79.1% -8.01%, var(--rad-grad-from) 0%, var(--rad-grad-to) 62%);
   font-family: 'Arimo', Arial, sans-serif;
   color: var(--white);
 }
+
