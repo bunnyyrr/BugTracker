@@ -8,9 +8,12 @@ import org.springframework.data.repository.query.Param;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUsernameIgnoreCase(String username);
-    Optional<User> findByEmailIgnoreCase(String email);
+    @Query("select u from User u where lower(u.username) = lower(:username)")
+    Optional<User> findByUsername(@Param("username") String username);
 
-    @Query("select u from User u where lower(u.username)= lower(:login) or lower(u.email)= lower(:login)")
+    @Query("select u from User u where lower(u.email) = lower(:email)")
+    Optional<User> findByEmail(@Param("email") String email);
+
+    @Query("select u from User u where lower(u.username) = lower(:login) or lower(u.email) = lower(:login)")
     Optional<User> findByLogin(@Param("login") String login);
 }
