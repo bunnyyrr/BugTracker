@@ -1,0 +1,11 @@
+<article class="card">
+  <header class="header">
+    <h2 class="name ">{{ project().name }}</h2>
+    <p class="description">{{ project().description }}</p>
+  </header>
+
+  <footer class="footer">
+    <app-role-badge [role]="project().role" />
+    <span class="bugs">Актуальных багов: <strong>{{ project().openBugCount }}</strong></span>
+  </footer>
+</article>
