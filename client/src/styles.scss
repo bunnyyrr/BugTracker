@@ -55,6 +55,8 @@
   --pb-card-divider: #A6A3C040;
   --pb-card-border: #A6A3C066;
 
+  --empty-icon-bg: #7C5CFF1A;
+  --empty-icon-border: #7C5CFF4D;
 }
 
 * {
@@ -67,7 +69,6 @@ body {
   min-height: 100vh;
   background: linear-gradient(37.5deg, var(--bg-accent) -179%, var(--bg-dark) 52%, var(--bg-accent) 285%),
     radial-gradient(59.48% 117.62% at 79.1% -8.01%, var(--rad-grad-from) 0%, var(--rad-grad-to) 62%);
-  background-repeat: no-repeat;
   font-family: 'Arimo', Arial, sans-serif;
   color: var(--white);
 }

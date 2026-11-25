@@ -30,6 +30,8 @@ export class ProjectList implements OnInit {
     return `${n} проектов, в которых вы участвуете`;
   });
 
+  hasProjects = computed(() => !this.loading() && !this.error() && this.projects().length > 0);
+
   ngOnInit(): void {
     this.projectService.getProjects().subscribe({
       next: (projects) => {
