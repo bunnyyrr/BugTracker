@@ -1,5 +1,6 @@
 package com.bugtracker.server.security;
 
+import com.bugtracker.server.service.i.TokenProvider;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.JWSHeader;
@@ -17,13 +18,13 @@ import java.util.Date;
 import java.util.Optional;
 
 @Component
-public class TokenProvider implements com.bugtracker.server.service.i.TokenProvider {
+public class JwtTokenProvider implements TokenProvider {
     private final MACSigner signer;
     private final MACVerifier verifier;
     private final Duration lifetime;
 
-    public TokenProvider(@Value("${app.jwt.secret}") String secret,
-                         @Value("${app.jwt.expiration-hours}") long expirationHours) {
+    public JwtTokenProvider(@Value("${app.jwt.secret}") String secret,
+                            @Value("${app.jwt.expiration-hours}") long expirationHours) {
         byte[] key = secret.getBytes(StandardCharsets.UTF_8);
         try {
             this.signer = new MACSigner(key);
