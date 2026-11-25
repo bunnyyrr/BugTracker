@@ -1,1 +1,23 @@
-<p>project-list works!</p>
+<div class="content">
+  <header class="head">
+    <div>
+      <h1 class="title">Мои проекты</h1>
+      @if (!loading() && !error()) {
+        <p class="subtitle">{{ countLabel() }}</p>
+      }
+    </div>
+    <button type="button" class="new-project">+ Новый проект</button>
+  </header>
+
+  @if (loading()) {
+    <p class="message">Загрузка…</p>
+  } @else if (error(); as message) {
+    <p class="message">{{ message }}</p>
+  } @else {
+    <section class="grid">
+      @for (project of projects(); track project.id) {
+        <app-project-card [project]="project" />
+      }
+    </section>
+  }
+</div>

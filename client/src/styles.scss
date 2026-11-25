@@ -49,6 +49,12 @@
   --badge-tes-border: #F472B652;
   --badge-tes-bg: #F472B626;
 
+  --pb-card-from: #8F70FF17;
+  --pb-card-to: #8F70FF0C;
+  --pb-card-shadow-inset: #FFFFFF0D;
+  --pb-card-divider: #A6A3C040;
+  --pb-card-border: #A6A3C066;
+
 }
 
 * {
@@ -58,8 +64,10 @@
 }
 
 body {
-  background: linear-gradient(47deg, var(--bg-accent) -179%, var(--bg-dark) 52%, var(--bg-accent) 285%),
+  min-height: 100vh;
+  background: linear-gradient(37.5deg, var(--bg-accent) -179%, var(--bg-dark) 52%, var(--bg-accent) 285%),
     radial-gradient(59.48% 117.62% at 79.1% -8.01%, var(--rad-grad-from) 0%, var(--rad-grad-to) 62%);
+  background-repeat: no-repeat;
   font-family: 'Arimo', Arial, sans-serif;
   color: var(--white);
 }
