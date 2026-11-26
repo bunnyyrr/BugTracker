@@ -1,0 +1,22 @@
+<header class="header">
+  <a class="logo" routerLink="/projects">Bug<span class="logo-accent">Tracker</span></a>
+
+  <nav class="nav">
+    <button class="profile" type="button" aria-haspopup="dialog" (click)="openProfile()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+        <circle cx="12" cy="7" r="4" />
+      </svg>
+      Профиль
+    </button>
+
+    <button class="logout" type="button" (click)="logout()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+        <path d="M16 17l5-5-5-5" />
+        <path d="M21 12H9" />
+      </svg>
+      Выйти
+    </button>
+  </nav>
+</header>
