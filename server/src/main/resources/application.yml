@@ -31,3 +31,5 @@ app:
   jwt:
     secret: ${JWT_SECRET:dev-only-secret-change-me-in-production-32b}
     expiration-hours: 24
+  storage:
+    path: ./uploads

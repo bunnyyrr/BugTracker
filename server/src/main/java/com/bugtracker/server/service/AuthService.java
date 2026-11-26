@@ -6,64 +6,57 @@ import com.bugtracker.server.exception.ValidationException;
 import com.bugtracker.server.repository.UserRepository;
 import com.bugtracker.server.service.i.PasswordHasher;
 import com.bugtracker.server.service.i.TokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
     private final TokenProvider tokenProvider;
 
-    public AuthService(UserRepository userRepository, PasswordHasher passwordHasher, TokenProvider tokenProvider) {
-        this.userRepository = userRepository;
-        this.passwordHasher = passwordHasher;
-        this.tokenProvider = tokenProvider;
-    }
-
     @Transactional
     public User register(String username, String email, String password) {
-        String name = trim(username);
-        String mail = trim(email);
-        if (name.isEmpty()) {
-            throw new ValidationException("Не все поля заполнены", "username");
+        if (username == null || username.isBlank()) {
+            throw new ValidationException("Введите имя пользователя", "username");
         }
-        if (mail.isEmpty()) {
-            throw new ValidationException("Не все поля заполнены", "email");
+        if (email == null || email.isBlank()) {
+            throw new ValidationException("Введите email", "email");
         }
         if (password == null || password.isBlank()) {
-            throw new ValidationException("Не все поля заполнены", "password");
+            throw new ValidationException("Введите пароль", "password");
         }
-        if (userRepository.findByUsernameIgnoreCase(name).isPresent()) {
+        if (userRepository.findByUsername(username).isPresent()) {
             throw new ValidationException("Имя пользователя уже занято", "username");
         }
-        if (userRepository.findByEmailIgnoreCase(mail).isPresent()) {
+        if (userRepository.findByEmail(email).isPresent()) {
             throw new ValidationException("Email уже используется", "email");
         }
-        return userRepository.save(new User(name, mail, passwordHasher.hash(password)));
+        String hash = passwordHasher.hash(password);
+        return userRepository.save(new User(username, email, hash));
     }
 
+    @Transactional(readOnly = true)
     public String login(String login, String password) {
-        String identifier = trim(login);
-        User user = identifier.isEmpty() ? null : userRepository.findByLogin(identifier).orElse(null);
-        if (user == null || user.isDeleted() || password == null || !passwordHasher.verify(password, user.getPasswordHash())) {
+        User user = userRepository.findByLogin(login).orElse(null);
+        if (user == null || user.isDeleted()) {
+            throw new UnauthorizedException("Неверный логин или пароль");
+        }
+        if (!passwordHasher.verify(password, user.getPasswordHash())) {
             throw new UnauthorizedException("Неверный логин или пароль");
         }
         return tokenProvider.issue(user.getId());
     }
 
-    private String trim(String value) {
-        return value == null ? "" : value.trim();
-    }
-
+    @Transactional(readOnly = true)
     public User authenticate(String token) {
-        Long userId = tokenProvider.validate(token)
-                .orElseThrow(() -> new UnauthorizedException("Токен неверный или просрочен"));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UnauthorizedException("Пользователь не найден"));
+        Long userId = tokenProvider.validate(token).orElseThrow(() -> new UnauthorizedException("Требуется вход"));
+        User user = userRepository.findById(userId).orElseThrow(() -> new UnauthorizedException("Требуется вход"));
         if (user.isDeleted()) {
-            throw new UnauthorizedException("Профиль удалён");
+            throw new UnauthorizedException("Требуется вход");
         }
         return user;
     }
