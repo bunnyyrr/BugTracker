@@ -2,29 +2,29 @@ package com.bugtracker.server.entity;
 
 import com.bugtracker.server.entity.enums.Role;
 import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
-@Table(name ="project_member")
+@Getter
+@Table(name = "project_member")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Membership {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name="project_id", nullable = false)
+    @JoinColumn(name = "project_id", nullable = false)
     private Project project;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Role role;
-
-    protected Membership() {
-    }
 
     Membership(Project project, User user, Role role) {
         this.project = project;
@@ -32,23 +32,11 @@ public class Membership {
         this.role = role;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public Project getProject() {
-        return project;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
     public boolean isTeamLead() {
         return role == Role.TEAM_LEAD;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }
