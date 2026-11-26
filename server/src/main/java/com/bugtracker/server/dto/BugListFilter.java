@@ -1,4 +1,4 @@
-package com.bugtracker.server.entity.enums;
+package com.bugtracker.server.dto;
 
 public enum BugListFilter {
     ACTUAL,
