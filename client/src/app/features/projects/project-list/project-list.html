@@ -1,1 +1,44 @@
-<p>project-list works!</p>
+<div class="content">
+  <header class="head">
+    <div>
+      <h1 class="title">Мои проекты</h1>
+      @if (hasProjects()) {
+        <p class="subtitle">{{ countLabel() }}</p>
+      }
+    </div>
+    @if (hasProjects()) {
+      <button type="button" class="new-project">+ Новый проект</button>
+    }
+  </header>
+
+  @if (loading()) {
+    <p class="message">Загрузка…</p>
+  } @else if (error(); as message) {
+    <p class="message">{{ message }}</p>
+  } @else if (!hasProjects()) {
+    <section class="empty">
+      <div class="empty-icon">
+        <svg width="26" height="21" viewBox="694.083 4888.67 25.834 20.66" aria-hidden="true">
+          <path
+            fill="currentColor"
+            fill-rule="evenodd"
+            d="M696.667 4888.67C695.253 4888.67 694.083 4889.84 694.083 4891.25V4906.75C694.083 4908.16 695.253 4909.33 696.667 4909.33H717.333C718.747 4909.33 719.917 4908.16 719.917 4906.75V4893.83C719.917 4892.42 718.747 4891.25 717.333 4891.25H707L704.417 4888.67H696.667ZM696.667 4891.25H703.347L705.93 4893.83H717.333V4906.75H696.667V4891.25Z"
+          />
+        </svg>
+      </div>
+      <div>
+        <h2 class="empty-title">У вас пока нет проектов</h2>
+        <p class="empty-text">
+          Создайте первый проект — вы автоматически станете его тимлидом. Или попросите коллегу добавить вас в существующий.
+        </p>
+      </div>
+      <button type="button" class="new-project">+ Новый проект</button>
+    </section>
+  } @else {
+    <section class="grid">
+      @for (project of projects(); track project.id) {
+        <app-project-card [project]="project" />
+      }
+    </section>
+  }
+</div>

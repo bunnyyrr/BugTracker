@@ -25,6 +25,7 @@
 
   --accent: #A78BFA;
   --danger: #FF5D7A;
+  --danger-text: #FF8FA5;
 
   --field-border: #A6A3C080;
   --field-bg-from: #FFFFFF09;
@@ -33,7 +34,33 @@
   --field-border-error: #FF5D7AB3;
   --field-bg-error: #FF5D7A1A;
 
-  --autofill: #2A2645;
+  --alert-bg: #FF5D7A26;
+  --alert-border: #FF5D7A99;
+
+  --badge-tl: #B18CFF;
+  --badge-tl-border: #B18CFF52;
+  --badge-tl-bg: #B18CFF26;
+
+  --badge-dev: #4CC9F0;
+  --badge-dev-border: #4CC9F052;
+  --badge-dev-bg: #4CC9F026;
+
+  --badge-tes: #F472B6;
+  --badge-tes-border: #F472B652;
+  --badge-tes-bg: #F472B626;
+
+  --pb-card-from: #8F70FF17;
+  --pb-card-to: #8F70FF0C;
+  --pb-card-shadow-inset: #FFFFFF0D;
+  --pb-card-divider: #A6A3C040;
+  --pb-card-border: #A6A3C066;
+
+  --empty-icon-bg: #7C5CFF1A;
+  --empty-icon-border: #7C5CFF4D;
+
+  --overlay: #1717171A;
+  --modal-glow: #7C5CFF1F;
+  --modal-shadow: #00000080;
 }
 
 * {
@@ -43,7 +70,8 @@
 }
 
 body {
-  background: linear-gradient(47deg, var(--bg-accent) -179%, var(--bg-dark) 52%, var(--bg-accent) 285%),
+  min-height: 100vh;
+  background: linear-gradient(37.5deg, var(--bg-accent) -179%, var(--bg-dark) 52%, var(--bg-accent) 285%),
     radial-gradient(59.48% 117.62% at 79.1% -8.01%, var(--rad-grad-from) 0%, var(--rad-grad-to) 62%);
   font-family: 'Arimo', Arial, sans-serif;
   color: var(--white);

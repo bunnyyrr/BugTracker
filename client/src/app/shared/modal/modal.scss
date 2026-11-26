@@ -1,0 +1,22 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  padding: 1rem;
+  overflow-y: auto;
+  background: var(--overlay);
+  backdrop-filter: blur(5px);
+}
+
+.card {
+  width: min(100%, 48.625rem);
+  margin: auto;
+  padding: 2.875rem 4rem;
+  background:
+    radial-gradient(172% 172% at 50% 0.08%, var(--modal-glow), transparent),
+    linear-gradient(322deg, var(--bg-accent) -179%, var(--bg-dark) 63%, var(--bg-accent) 305%);
+  border: 3px solid var(--card-border);
+  border-radius: 1.25rem;
+  box-shadow: 0 0.75rem 3.125rem 0 var(--modal-shadow);
+}

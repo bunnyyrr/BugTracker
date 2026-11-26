@@ -1,5 +1,11 @@
 export type Role = 'TESTER' | 'DEVELOPER' | 'TEAM_LEAD';
 
+export const ROLE_LABELS: Record<Role, string> = {
+  TEAM_LEAD: 'Тимлид',
+  DEVELOPER: 'Разработчик',
+  TESTER: 'Тестировщик',
+};
+
 export interface ProjectSummary {
   id: number;
   name: string;
