@@ -87,11 +87,6 @@ public class Bug {
     @Getter(AccessLevel.NONE)
     @OneToMany(mappedBy = "bug", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("changedAt ASC, id ASC")
-    private List<HistoryEntry> historyEntry = new ArrayList<>();
-
-    @Getter(AccessLevel.NONE)
-    @OneToMany(mappedBy = "bug", cascade = CascadeType.ALL, orphanRemoval = true)
-    @OrderBy("changedAt ASC, id ASC")
     private List<HistoryEntry> history = new ArrayList<>();
 
     public Bug(Project project, User author, String title, Priority priority, String description, String stepsToReproduce, String expectedResult, String actualResult) {
