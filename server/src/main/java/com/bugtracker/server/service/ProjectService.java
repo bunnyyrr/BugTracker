@@ -2,9 +2,12 @@ package com.bugtracker.server.service;
 
 import com.bugtracker.server.dto.BugListFilter;
 import com.bugtracker.server.dto.BugQuery;
-import com.bugtracker.server.dto.ProjectResponse;
 import com.bugtracker.server.dto.ProjectSummary;
-import com.bugtracker.server.entity.*;
+import com.bugtracker.server.entity.Attachment;
+import com.bugtracker.server.entity.Bug;
+import com.bugtracker.server.entity.Comment;
+import com.bugtracker.server.entity.Project;
+import com.bugtracker.server.entity.User;
 import com.bugtracker.server.entity.enums.Role;
 import com.bugtracker.server.exception.NotFoundException;
 import com.bugtracker.server.exception.ValidationException;
@@ -22,7 +25,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-public class ProjectService {
+public class ProjectService implements IProjectService {
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
@@ -30,6 +33,7 @@ public class ProjectService {
     private final AccessChecker accessChecker;
     private final FileStorage fileStorage;
 
+    @Override
     @Transactional
     public Project createProject(Long creatorId, String name, String description) {
         if (name == null || name.isBlank()) {
@@ -42,6 +46,7 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public List<ProjectSummary> getProjects(Long userId) {
         return projectRepository.findByMember(userId).stream()
@@ -52,6 +57,7 @@ public class ProjectService {
                 .toList();
     }
 
+    @Override
     @Transactional(readOnly = true)
     public Project getProject(Long actorId, Long projectId) {
         accessChecker.requireMember(projectId, actorId);
@@ -59,6 +65,7 @@ public class ProjectService {
                 .orElseThrow(() -> new NotFoundException("Проект не найден"));
     }
 
+    @Override
     @Transactional
     public Project updateProject(Long actorId, Long projectId, String name, String description) {
         accessChecker.requireRole(projectId, actorId, List.of(Role.TEAM_LEAD));
@@ -71,6 +78,7 @@ public class ProjectService {
         return projectRepository.save(project);
     }
 
+    @Override
     @Transactional
     public void deleteProject(Long actorId, Long projectId) {
         accessChecker.requireRole(projectId, actorId, List.of(Role.TEAM_LEAD));

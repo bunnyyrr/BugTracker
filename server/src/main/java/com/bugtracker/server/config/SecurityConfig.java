@@ -2,7 +2,7 @@ package com.bugtracker.server.config;
 
 import com.bugtracker.server.security.JsonAuthenticationEntryPoint;
 import com.bugtracker.server.security.JwtAuthenticationFilter;
-import com.bugtracker.server.service.AuthService;
+import com.bugtracker.server.service.i.IAuthService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,7 +14,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain filterChain(HttpSecurity http, AuthService authService) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http, IAuthService authService) throws Exception {
         http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(handling -> handling.authenticationEntryPoint(new JsonAuthenticationEntryPoint()))

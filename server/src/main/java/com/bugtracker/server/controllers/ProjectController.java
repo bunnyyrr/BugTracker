@@ -1,8 +1,10 @@
 package com.bugtracker.server.controllers;
 
+import com.bugtracker.server.api.project.ProjectSummaryResponse;
 import com.bugtracker.server.dto.CreateProjectRequest;
 import com.bugtracker.server.dto.ProjectResponse;
-import com.bugtracker.server.dto.ProjectSummary;
+import com.bugtracker.server.entity.Project;
+import com.bugtracker.server.entity.enums.Role;
 import com.bugtracker.server.service.i.IProjectService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,18 +29,23 @@ public class ProjectController {
     }
 
     @GetMapping
-    public List<ProjectSummary> list(@AuthenticationPrincipal Long actorId) {
-        return projectService.getProjects(actorId);
+    public List<ProjectSummaryResponse> list(@AuthenticationPrincipal Long actorId) {
+        return projectService.getProjects(actorId).stream()
+                .map(ProjectSummaryResponse::from)
+                .toList();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public ProjectResponse create(@AuthenticationPrincipal Long actorId, @RequestBody CreateProjectRequest request) {
-        return projectService.createProject(actorId, request.name(), request.description());
+        Project project = projectService.createProject(actorId, request.name(), request.description());
+        return new ProjectResponse(project.getId(), project.getName(), project.getDescription(), Role.TEAM_LEAD);
     }
 
     @GetMapping("/{projectId}")
     public ProjectResponse get(@AuthenticationPrincipal Long actorId, @PathVariable Long projectId) {
-        return projectService.getProject(actorId, projectId);
+        Project project = projectService.getProject(actorId, projectId);
+        Role role = project.getMembership(actorId).orElseThrow().getRole();
+        return new ProjectResponse(project.getId(), project.getName(), project.getDescription(), role);
     }
 }

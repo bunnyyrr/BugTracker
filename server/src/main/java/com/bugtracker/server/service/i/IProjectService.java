@@ -1,15 +1,18 @@
 package com.bugtracker.server.service.i;
 
-import com.bugtracker.server.dto.ProjectResponse;
 import com.bugtracker.server.dto.ProjectSummary;
+import com.bugtracker.server.entity.Project;
 
 import java.util.List;
 
 public interface IProjectService {
-
-    ProjectResponse createProject(Long creatorId, String name, String description);
+    Project createProject(Long creatorId, String name, String description);
 
     List<ProjectSummary> getProjects(Long userId);
 
-    ProjectResponse getProject(Long actorId, Long projectId);
+    Project getProject(Long actorId, Long projectId);
+
+    Project updateProject(Long actorId, Long projectId, String name, String description);
+
+    void deleteProject(Long actorId, Long projectId);
 }

@@ -4,7 +4,7 @@ import com.bugtracker.server.dto.LoginRequest;
 import com.bugtracker.server.dto.LoginResponse;
 import com.bugtracker.server.dto.RegisterRequest;
 import com.bugtracker.server.dto.UserResponse;
-import com.bugtracker.server.service.AuthService;
+import com.bugtracker.server.service.i.IAuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/auth")
 public class AuthController {
 
-    private final AuthService authService;
+    private final IAuthService authService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(IAuthService authService) {
         this.authService = authService;
     }
 

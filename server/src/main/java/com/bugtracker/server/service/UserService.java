@@ -8,6 +8,8 @@ import com.bugtracker.server.exception.ValidationException;
 import com.bugtracker.server.repository.ProjectRepository;
 import com.bugtracker.server.repository.UserRepository;
 import com.bugtracker.server.service.i.PasswordHasher;
+import com.bugtracker.server.service.i.IBugService;
+import com.bugtracker.server.service.i.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,18 +18,20 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements IUserService {
 
     private final UserRepository userRepository;
     private final ProjectRepository projectRepository;
     private final PasswordHasher passwordHasher;
-    private final BugService bugService;
+    private final IBugService bugService;
 
+    @Override
     @Transactional(readOnly = true)
     public User getProfile(Long userId) {
         return userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
     }
 
+    @Override
     @Transactional
     public User updateProfile(Long userId, String username, String email, String newPassword) {
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));
@@ -55,6 +59,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Override
     @Transactional
     public void deleteProfile(Long userId) {
         List<Project> projects = projectRepository.findByMember(userId);

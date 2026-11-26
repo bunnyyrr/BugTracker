@@ -16,6 +16,7 @@ import com.bugtracker.server.repository.UserRepository;
 
 import com.bugtracker.server.storage.FileStorage;
 
+import com.bugtracker.server.service.i.IBugService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
-public class BugService {
+public class BugService implements IBugService {
 
     private static final Set<String> ALLOWED_CONTENT_TYPES = Set.of("image/png", "image/jpeg", "image/gif", "image/webp", "text/plain", "application/pdf");
 
@@ -36,6 +37,7 @@ public class BugService {
     private final AccessChecker accessChecker;
     private final FileStorage fileStorage;
 
+    @Override
     @Transactional
     public Bug createBug(Long actorId, Long projectId, String title, Priority priority, String description, String stepsToReproduce, String expectedResult, String actualResult, List<FileUpload> files)
     {
@@ -68,6 +70,7 @@ public class BugService {
         return bugRepository.save(bug);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public Bug getBug(Long actorId, Long bugId) {
         Bug bug = bugRepository.findById(bugId).orElseThrow(() -> new NotFoundException("Баг не найден"));
@@ -75,12 +78,14 @@ public class BugService {
         return bug;
     }
 
+    @Override
     @Transactional(readOnly = true)
     public List<Bug> searchBugs(Long actorId, Long projectId, BugQuery query) {
         accessChecker.requireMember(projectId, actorId);
         return bugRepository.search(projectId, actorId, query);
     }
 
+    @Override
     @Transactional
     public Bug takeInWork(Long actorId, Long bugId) {
         Bug bug = bugRepository.findById(bugId).orElseThrow(() -> new NotFoundException("Баг не найден"));
@@ -90,6 +95,7 @@ public class BugService {
         return bugRepository.save(bug);
     }
 
+    @Override
     @Transactional
     public Bug abandonBug(Long actorId, Long bugId) {
         Bug bug = bugRepository.findById(bugId).orElseThrow(() -> new NotFoundException("Баг не найден"));
@@ -101,6 +107,7 @@ public class BugService {
         return bugRepository.save(bug);
     }
 
+    @Override
     @Transactional
     public void deleteBug(Long actorId, Long bugId) {
         Bug bug = bugRepository.findById(bugId).orElseThrow(() -> new NotFoundException("Баг не найден"));
@@ -119,6 +126,7 @@ public class BugService {
         bugRepository.delete(bug);
     }
 
+    @Override
     @Transactional
     public Bug submitForReview(Long actorId, Long bugId, List<String> urls) {
         Bug bug = bugRepository.findById(bugId).orElseThrow(() -> new NotFoundException("Баг не найден"));
@@ -130,6 +138,7 @@ public class BugService {
         return bugRepository.save(bug);
     }
 
+    @Override
     @Transactional
     public Bug closeBug(Long actorId, Long bugId, String commentText) {
         Bug bug = bugRepository.findById(bugId).orElseThrow(() -> new NotFoundException("Баг не найден"));
@@ -139,6 +148,7 @@ public class BugService {
         return bugRepository.save(bug);
     }
 
+    @Override
     @Transactional
     public Bug returnToWork(Long actorId, Long bugId, String commentText) {
         Bug bug = bugRepository.findById(bugId).orElseThrow(() -> new NotFoundException("Баг не найден"));
@@ -148,6 +158,7 @@ public class BugService {
         return bugRepository.save(bug);
     }
 
+    @Override
     @Transactional
     public Comment addComment(Long actorId, Long bugId, String text, List<FileUpload> files) {
         Bug bug = bugRepository.findById(bugId).orElseThrow(() -> new NotFoundException("Баг не найден"));
@@ -171,6 +182,7 @@ public class BugService {
         return comment;
     }
 
+    @Override
     @Transactional(readOnly = true)
     public FileDownload getAttachment(Long actorId, Long attachmentId) {
         Bug bug = bugRepository.findByAttachmentId(attachmentId).orElseThrow(() -> new NotFoundException("Вложение не найдено"));
@@ -185,6 +197,7 @@ public class BugService {
         return new FileDownload(attachment.getFileName(), attachment.getContentType(), content);
     }
 
+    @Override
     @Transactional
     public void releaseAssignedBugs(Long actorId, Long projectId, Long userId) {
         User actor = userRepository.findById(actorId).orElseThrow(() -> new NotFoundException("Пользователь не найден"));

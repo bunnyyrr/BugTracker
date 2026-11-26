@@ -6,18 +6,20 @@ import com.bugtracker.server.exception.ValidationException;
 import com.bugtracker.server.repository.UserRepository;
 import com.bugtracker.server.service.i.PasswordHasher;
 import com.bugtracker.server.service.i.TokenProvider;
+import com.bugtracker.server.service.i.IAuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class AuthService implements IAuthService {
 
     private final UserRepository userRepository;
     private final PasswordHasher passwordHasher;
     private final TokenProvider tokenProvider;
 
+    @Override
     @Transactional
     public User register(String username, String email, String password) {
         if (username == null || username.isBlank()) {
@@ -39,6 +41,7 @@ public class AuthService {
         return userRepository.save(new User(username, email, hash));
     }
 
+    @Override
     @Transactional(readOnly = true)
     public String login(String login, String password) {
         User user = userRepository.findByLogin(login).orElse(null);
@@ -51,6 +54,7 @@ public class AuthService {
         return tokenProvider.issue(user.getId());
     }
 
+    @Override
     @Transactional(readOnly = true)
     public User authenticate(String token) {
         Long userId = tokenProvider.validate(token).orElseThrow(() -> new UnauthorizedException("Требуется вход"));

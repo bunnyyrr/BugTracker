@@ -14,6 +14,7 @@ import com.bugtracker.server.repository.BugRepository;
 import com.bugtracker.server.repository.ProjectRepository;
 import com.bugtracker.server.repository.ReleaseRepository;
 import com.bugtracker.server.repository.UserRepository;
+import com.bugtracker.server.service.i.IReleaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ReleaseService {
+public class ReleaseService implements IReleaseService {
 
     private final ReleaseRepository releaseRepository;
     private final ProjectRepository projectRepository;
@@ -32,6 +33,7 @@ public class ReleaseService {
     private final UserRepository userRepository;
     private final AccessChecker accessChecker;
 
+    @Override
     @Transactional(readOnly = true)
     public List<ReleaseSummary> getReleases(Long actorId, Long projectId) {
         accessChecker.requireMember(projectId, actorId);
@@ -40,6 +42,7 @@ public class ReleaseService {
                 .toList();
     }
 
+    @Override
     @Transactional(readOnly = true)
     public Release getRelease(Long actorId, Long releaseId) {
         Release release = releaseRepository.findById(releaseId).orElseThrow(() -> new NotFoundException("Релиз не найден"));
@@ -47,6 +50,7 @@ public class ReleaseService {
         return release;
     }
 
+    @Override
     @Transactional
     public Release createRelease(Long actorId, Long projectId, String name, Instant plannedDate) {
         accessChecker.requireRole(projectId, actorId, List.of(Role.TEAM_LEAD));
@@ -61,6 +65,7 @@ public class ReleaseService {
         return releaseRepository.save(new Release(project, name, plannedDate));
     }
 
+    @Override
     @Transactional
     public Release changeDate(Long actorId, Long releaseId, Instant newDate) {
         Release release = releaseRepository.findById(releaseId).orElseThrow(() -> new NotFoundException("Релиз не найден"));
@@ -72,6 +77,7 @@ public class ReleaseService {
         return releaseRepository.save(release);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public List<Bug> getAvailableBugs(Long actorId, Long releaseId) {
         Release release = releaseRepository.findById(releaseId).orElseThrow(() -> new NotFoundException("Релиз не найден"));
@@ -82,6 +88,7 @@ public class ReleaseService {
         return bugRepository.findWithoutRelease(release.getProject().getId());
     }
 
+    @Override
     @Transactional
     public Release addBugs(Long actorId, Long releaseId, List<Long> bugIds) {
         Release release = releaseRepository.findById(releaseId).orElseThrow(() -> new NotFoundException("Релиз не найден"));
@@ -97,6 +104,7 @@ public class ReleaseService {
         return releaseRepository.save(release);
     }
 
+    @Override
     @Transactional
     public Release removeBugs(Long actorId, Long releaseId, List<Long> bugIds) {
         Release release = releaseRepository.findById(releaseId).orElseThrow(() -> new NotFoundException("Релиз не найден"));
@@ -112,6 +120,7 @@ public class ReleaseService {
         return releaseRepository.save(release);
     }
 
+    @Override
     @Transactional(readOnly = true)
     public PublishPreview getPublishPreview(Long actorId, Long releaseId) {
         Release release = releaseRepository.findById(releaseId).orElseThrow(() -> new NotFoundException("Релиз не найден"));
@@ -123,6 +132,7 @@ public class ReleaseService {
         return new PublishPreview(unclosedBugs, next);
     }
 
+    @Override
     @Transactional
     public Release publish(Long actorId, Long releaseId) {
         Release release = releaseRepository.findById(releaseId).orElseThrow(() -> new NotFoundException("Релиз не найден"));
@@ -137,6 +147,7 @@ public class ReleaseService {
         return release;
     }
 
+    @Override
     @Transactional
     public void deleteRelease(Long actorId, Long releaseId) {
         Release release = releaseRepository.findById(releaseId).orElseThrow(() -> new NotFoundException("Релиз не найден"));

@@ -9,6 +9,8 @@ import com.bugtracker.server.exception.NotFoundException;
 import com.bugtracker.server.repository.ProjectRepository;
 import com.bugtracker.server.repository.UserRepository;
 
+import com.bugtracker.server.service.i.IBugService;
+import com.bugtracker.server.service.i.IMemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,13 +19,14 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class MemberService {
+public class MemberService implements IMemberService {
 
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
     private final AccessChecker accessChecker;
-    private final BugService bugService;
+    private final IBugService bugService;
 
+    @Override
     @Transactional(readOnly = true)
     public List<Membership> getMembers(Long actorId, Long projectId) {
         accessChecker.requireMember(projectId, actorId);
@@ -31,6 +34,7 @@ public class MemberService {
         return project.getMemberships();
     }
 
+    @Override
     @Transactional(readOnly = true)
     public User findCandidate(Long actorId, Long projectId, String username) {
         accessChecker.requireRole(projectId, actorId, List.of(Role.TEAM_LEAD));
@@ -42,6 +46,7 @@ public class MemberService {
         return user;
     }
 
+    @Override
     @Transactional
     public Membership addMember(Long actorId, Long projectId, String username, Role role) {
         accessChecker.requireRole(projectId, actorId, List.of(Role.TEAM_LEAD));
@@ -52,6 +57,7 @@ public class MemberService {
         return membership;
     }
 
+    @Override
     @Transactional
     public Membership changeRole(Long actorId, Long projectId, Long userId, Role role) {
         accessChecker.requireRole(projectId, actorId, List.of(Role.TEAM_LEAD));
@@ -64,6 +70,7 @@ public class MemberService {
         return membership;
     }
 
+    @Override
     @Transactional
     public void removeMember(Long actorId, Long projectId, Long userId) {
         accessChecker.requireRole(projectId, actorId, List.of(Role.TEAM_LEAD));

@@ -2,7 +2,7 @@ package com.bugtracker.server.security;
 
 import com.bugtracker.server.entity.User;
 import com.bugtracker.server.exception.UnauthorizedException;
-import com.bugtracker.server.service.AuthService;
+import com.bugtracker.server.service.i.IAuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,9 +19,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private static final String PREFIX = "Bearer ";
 
-    private final AuthService authService;
+    private final IAuthService authService;
 
-    public JwtAuthenticationFilter(AuthService authService) {
+    public JwtAuthenticationFilter(IAuthService authService) {
         this.authService = authService;
     }
 
